@@ -9,10 +9,10 @@ export const DATA_SOURCES = {
     }
 };
 
-export const RABBITMQ = {
-  port: process.env.QUEUE_PORT || '5672',
-  user: process.env.QUEUE_USER || 'peleza',
-  pass: process.env.QUEUE_PASS || 'peleza123!',
-  host: process.env.QUEUE_HOST || 'localhost', // 127.0.0.1
-  vhost: process.env.QUEUE_VHOST || 'peleza',
-};
+// export const RABBITMQ = {
+//   port: process.env.QUEUE_PORT || '5672',
+//   user: process.env.QUEUE_USER || 'peleza',
+//   pass: process.env.QUEUE_PASS || 'peleza123!',
+//   host: process.env.QUEUE_HOST || 'localhost', // 127.0.0.1
+//   vhost: process.env.QUEUE_VHOST || 'peleza',
+// };
