@@ -151,6 +151,7 @@ function makeid(length) {
 export const saveApiRequest = async (RequestData: any) => {
   try {
     const system_reference = randomUUID();
+    const request_ref_number = makeid(13)
     const tasks: Promise<any>[] = [];
     await Promise.all(
       RequestData.validation_data.map((request_details) =>
@@ -159,7 +160,7 @@ export const saveApiRequest = async (RequestData: any) => {
     );
     RequestData.validation_data.forEach((element) => {
       tasks.push(
-        validateAndSaveRequest(element, system_reference, RequestData)
+        validateAndSaveRequest(element, system_reference, RequestData, request_ref_number)
       );
     });
     const iterator = callTasks(tasks);
@@ -170,7 +171,7 @@ export const saveApiRequest = async (RequestData: any) => {
       }
     }
 
-    return system_reference;
+    return {system_reference: system_reference, request_ref_number: request_ref_number};
   } catch (err) {
     throw err;
   }
@@ -210,7 +211,8 @@ export const FetchPeldataByClientRef = (
 const validateAndSaveRequest = <T>(
   data: any,
   system_reference: string,
-  requestData: any
+  requestData: any,
+  request_ref_number: string,
 ): Promise<T> => {
   return new Promise<T>(async (resolve, reject) => {
     try {
@@ -224,10 +226,10 @@ const validateAndSaveRequest = <T>(
       }
 
       // const request_ref = randomUUID();
-      const request_ref = makeid(13);
+      // const request_ref = makeid(13);
 
       const pelData: IPelReq = {
-        request_ref_number: request_ref.toUpperCase(),
+        request_ref_number: request_ref_number.toUpperCase(),
         company_name: requestData.company_name,
         client_number: requestData.client_reference,
         bg_dataset_name: data.bg_dataset_name || data.dataset_name,
@@ -263,9 +265,9 @@ const validateAndSaveRequest = <T>(
       await savePelRequest(pelData);
 
       const pelModuleData: IPelModule = {
-        request_id: request_ref,
+        request_id: request_ref_number,
         client_id: requestData.client_id,
-        request_ref_number: request_ref,
+        request_ref_number: request_ref_number,
         parent_module_id: ModuleDetails.module_id,
         module_cost_quote: ModuleDetails.module_cost,
         package_name: PackageDetails.package_name,
