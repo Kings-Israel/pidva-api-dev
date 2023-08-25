@@ -6,16 +6,15 @@ import {verifyToken} from '../security/api.security';
 export default (router) => {
   router.post('/batch', async (req: Request, res: Response) => {
         try {
-
-          let tkn = req.body.token || req.header('token');
+          const tkn = req.body.token || req.header('token');
           if (!tkn) {
-            let errMsg={
-              message:'token missing in header'
+            const errMsg = {
+              message: 'token missing in header'
             }
             return res.status(403).json(errMsg)
           }
 
-          let tknData:any= await verifyToken(tkn)
+          const tknData:any = await verifyToken(tkn)
 
           if(!req.body.client_reference) {
             throw new Error (" client_reference missing ")
@@ -30,7 +29,7 @@ export default (router) => {
             throw new Error (" validation_data missing ")
           }
 
-          let apiReq:IRequestData ={
+          const apiReq:IRequestData = {
             company_name:tknData.company_name,
             client_number:tknData.client_reference,
             client_id:tknData.client_id,
@@ -51,11 +50,11 @@ export default (router) => {
           const responseStatus = {
             "status":"success",
             "reference":systemRefrence
-        }     
+          }     
           return res.status(200).json(responseStatus)
         } catch (e) {
           console.log(" error : " ,e);
-          let errMsg={
+          const errMsg = {
             message:e.message
           }
           return res.status(502).json(errMsg)

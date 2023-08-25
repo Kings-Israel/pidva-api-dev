@@ -46,11 +46,16 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clientLogin = exports.processQueueMessage = exports.FetchPeldataByClientRef = exports.fetchDetailsByRef = exports.saveApiRequest = void 0;
 const mysql_connector_1 = require("../config/mysql.connector");
+<<<<<<< HEAD
 const config_1 = require("../config/config");
+=======
+// import { RABBITMQ } from "../config/config";
+>>>>>>> kings
 const callback = __importStar(require("../interfaces/callback"));
 const querries_1 = require("../repo/querries");
 const service_report_1 = require("../report/service.report");
 const crypto_1 = __importStar(require("crypto"));
+<<<<<<< HEAD
 const Amqp = __importStar(require("../interfaces/queue"));
 const request_validation_1 = require("../validations/request.validation");
 const api_security_1 = require("../security/api.security");
@@ -81,6 +86,44 @@ queue.activateConsumer((message) => {
 connection.completeConfiguration().then(() => {
     console.log(" ==Queue  Config Done and Ready ===");
 });
+=======
+// import * as Amqp from "../interfaces/queue";
+const request_validation_1 = require("../validations/request.validation");
+const api_security_1 = require("../security/api.security");
+// function get_url() {
+//   const config = RABBITMQ;
+//   const queue_url =
+//     "amqp://" +
+//     config.user +
+//     ":" +
+//     config.pass +
+//     "@" +
+//     config.host +
+//     ":" +
+//     config.port +
+//     "/" +
+//     config.vhost;
+//   return queue_url;
+// }
+// const connection = new Amqp.Connection(get_url());
+// const exchange = connection.declareExchange("Peleza", "direct");
+// const queue = connection.declareQueue("VerifiedQueue");
+// queue.bind(exchange);
+// queue.activateConsumer(
+//   (message) => {
+//     console.log(
+//       " Queue Message received ..should call process queue message: " +
+//         message.getContent()
+//     );
+//     processQueueMessage(message.getContent());
+//     message.ack();
+//   },
+//   { noAck: false }
+// );
+// connection.completeConfiguration().then(() => {
+//   console.log(" ==Queue  Config Done and Ready ===");
+// });
+>>>>>>> kings
 function getModule(module_code) {
     return __awaiter(this, void 0, void 0, function* () {
         return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.validateModule, [module_code]);
@@ -91,11 +134,17 @@ function getPackage(package_id) {
         return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.validatePackage, [package_id]);
     });
 }
+<<<<<<< HEAD
 function findPeldata(request_id) {
     return __awaiter(this, void 0, void 0, function* () {
         return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.findPeldata, [request_id]);
     });
 }
+=======
+// async function findPeldata(request_id) {
+//   return execute<IPelData>(PelezaQueries.findPeldata, [request_id]);
+// }
+>>>>>>> kings
 function findPeldataByRef(request_ref) {
     return __awaiter(this, void 0, void 0, function* () {
         return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.findPeldataByRef, [request_ref]);
@@ -182,10 +231,18 @@ function makeid(length) {
 const saveApiRequest = (RequestData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const system_reference = (0, crypto_1.randomUUID)();
+<<<<<<< HEAD
         const tasks = [];
         yield Promise.all(RequestData.validation_data.map((request_details) => (0, request_validation_1.ValidateSingleRequest)(request_details)));
         RequestData.validation_data.forEach((element) => {
             tasks.push(validateAndSaveRequest(element, system_reference, RequestData));
+=======
+        const request_ref_number = makeid(13);
+        const tasks = [];
+        yield Promise.all(RequestData.validation_data.map((request_details) => (0, request_validation_1.ValidateSingleRequest)(request_details)));
+        RequestData.validation_data.forEach((element) => {
+            tasks.push(validateAndSaveRequest(element, system_reference, RequestData, request_ref_number));
+>>>>>>> kings
         });
         const iterator = callTasks(tasks);
         while (true) {
@@ -194,7 +251,11 @@ const saveApiRequest = (RequestData) => __awaiter(void 0, void 0, void 0, functi
                 break;
             }
         }
+<<<<<<< HEAD
         return system_reference;
+=======
+        return { system_reference: system_reference, request_ref_number: request_ref_number };
+>>>>>>> kings
     }
     catch (err) {
         throw err;
@@ -232,7 +293,11 @@ const FetchPeldataByClientRef = (client_reference) => {
 };
 exports.FetchPeldataByClientRef = FetchPeldataByClientRef;
 // here we save details
+<<<<<<< HEAD
 const validateAndSaveRequest = (data, system_reference, requestData) => {
+=======
+const validateAndSaveRequest = (data, system_reference, requestData, request_ref_number) => {
+>>>>>>> kings
     return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const ModuleDetails = (yield getModule(data.module_code))[0];
@@ -244,9 +309,15 @@ const validateAndSaveRequest = (data, system_reference, requestData) => {
                 throw new Error(" Invalid Package id ");
             }
             // const request_ref = randomUUID();
+<<<<<<< HEAD
             const request_ref = makeid(13);
             const pelData = {
                 request_ref_number: request_ref.toUpperCase(),
+=======
+            // const request_ref = makeid(13);
+            const pelData = {
+                request_ref_number: request_ref_number.toUpperCase(),
+>>>>>>> kings
                 company_name: requestData.company_name,
                 client_number: requestData.client_reference,
                 bg_dataset_name: data.bg_dataset_name || data.dataset_name,
@@ -281,9 +352,15 @@ const validateAndSaveRequest = (data, system_reference, requestData) => {
             // console.log(" === Pel data === ",pelData)
             yield savePelRequest(pelData);
             const pelModuleData = {
+<<<<<<< HEAD
                 request_id: request_ref,
                 client_id: requestData.client_id,
                 request_ref_number: request_ref,
+=======
+                request_id: request_ref_number,
+                client_id: requestData.client_id,
+                request_ref_number: request_ref_number,
+>>>>>>> kings
                 parent_module_id: ModuleDetails.module_id,
                 module_cost_quote: ModuleDetails.module_cost,
                 package_name: PackageDetails.package_name,

@@ -37,14 +37,24 @@ const api_security_1 = require("../security/api.security");
 exports.default = (router) => {
     router.post('/batch', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+<<<<<<< HEAD
             let tkn = req.body.token || req.header('token');
             if (!tkn) {
                 let errMsg = {
+=======
+            const tkn = req.body.token || req.header('token');
+            if (!tkn) {
+                const errMsg = {
+>>>>>>> kings
                     message: 'token missing in header'
                 };
                 return res.status(403).json(errMsg);
             }
+<<<<<<< HEAD
             let tknData = yield (0, api_security_1.verifyToken)(tkn);
+=======
+            const tknData = yield (0, api_security_1.verifyToken)(tkn);
+>>>>>>> kings
             if (!req.body.client_reference) {
                 throw new Error(" client_reference missing ");
             }
@@ -57,7 +67,11 @@ exports.default = (router) => {
             if (!req.body.validation_data) {
                 throw new Error(" validation_data missing ");
             }
+<<<<<<< HEAD
             let apiReq = {
+=======
+            const apiReq = {
+>>>>>>> kings
                 company_name: tknData.company_name,
                 client_number: tknData.client_reference,
                 client_id: tknData.client_id,
@@ -82,7 +96,11 @@ exports.default = (router) => {
         }
         catch (e) {
             console.log(" error : ", e);
+<<<<<<< HEAD
             let errMsg = {
+=======
+            const errMsg = {
+>>>>>>> kings
                 message: e.message
             };
             return res.status(502).json(errMsg);

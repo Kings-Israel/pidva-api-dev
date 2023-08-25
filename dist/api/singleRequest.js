@@ -36,6 +36,7 @@ const BussinesLogicService = __importStar(require("../services/logic.service"));
 const api_security_1 = require("../security/api.security");
 exports.default = (router) => {
     // app.use('/request/single', route);
+<<<<<<< HEAD
     router.post('/single', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             let tkn = req.body.token || req.header('token');
@@ -47,19 +48,41 @@ exports.default = (router) => {
             }
             let tknData = yield (0, api_security_1.verifyToken)(tkn);
             //   console.log(" === Token Data ===== ",tknData)
+=======
+    router.post("/single", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const tkn = req.body.token || req.header("token");
+            if (!tkn) {
+                const errMsg = {
+                    message: "token missing in header",
+                };
+                return res.status(403).json(errMsg);
+            }
+            const tknData = yield (0, api_security_1.verifyToken)(tkn);
+            // console.log(" === Token Data ===== ",tknData)
+>>>>>>> kings
             if (!req.body.client_reference) {
                 throw new Error(" client_reference missing ");
             }
             if (!req.body.callback) {
                 throw new Error(" callback missing ");
             }
+<<<<<<< HEAD
             if (!req.body.terms_and_condition || req.body.terms_and_condition == false) {
+=======
+            if (!req.body.terms_and_condition ||
+                req.body.terms_and_condition == false) {
+>>>>>>> kings
                 throw new Error(" terms_and_condition missing or is false (should be true)");
             }
             if (!req.body.validation_data) {
                 throw new Error(" validation_data missing ");
             }
+<<<<<<< HEAD
             let apiReq = {
+=======
+            const apiReq = {
+>>>>>>> kings
                 company_name: tknData.company_name,
                 client_number: tknData.client_reference,
                 client_id: tknData.client_id,
@@ -73,6 +96,7 @@ exports.default = (router) => {
                 number_of_records: 1,
                 upload_path: "N/A",
                 validation_data: [req.body.validation_data],
+<<<<<<< HEAD
                 client_login_id: tknData.client_company_id
             };
             //      // client_company_id:
@@ -80,13 +104,27 @@ exports.default = (router) => {
             const responseStatus = {
                 "status": "success",
                 "reference": systemRefrence
+=======
+                client_login_id: tknData.client_company_id,
+            };
+            // client_company_id:
+            const { request_ref_number } = yield BussinesLogicService.saveApiRequest(apiReq);
+            const responseStatus = {
+                status: "success",
+                reference: request_ref_number.toUpperCase(),
+>>>>>>> kings
             };
             return res.status(200).json(responseStatus);
         }
         catch (e) {
             console.log(" errr ", e);
+<<<<<<< HEAD
             let errMsg = {
                 message: e.message
+=======
+            const errMsg = {
+                message: e.message,
+>>>>>>> kings
             };
             return res.status(502).json(errMsg);
         }
