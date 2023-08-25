@@ -1,5 +1,5 @@
 import { execute } from "../config/mysql.connector";
-// import { RABBITMQ } from "../config/config";
+import { RABBITMQ } from "../config/config";
 import * as callback from "../interfaces/callback";
 import { PelezaQueries } from "../repo/querries";
 import {
@@ -13,48 +13,48 @@ import {
 } from "../repo/Ipsmt.model";
 import { fetchCallbackData } from "../report/service.report";
 import crypto, { randomUUID } from "crypto";
-// import * as Amqp from "../interfaces/queue";
+import * as Amqp from "../interfaces/queue";
 import { ValidateSingleRequest } from "../validations/request.validation";
 import { ILoginRequestData } from "./Iapirequest.iface";
 import { generateToken } from "../security/api.security";
 
-// function get_url() {
-//   const config = RABBITMQ;
-//   const queue_url =
-//     "amqp://" +
-//     config.user +
-//     ":" +
-//     config.pass +
-//     "@" +
-//     config.host +
-//     ":" +
-//     config.port +
-//     "/" +
-//     config.vhost;
+function get_url() {
+  const config = RABBITMQ;
+  const queue_url =
+    "amqp://" +
+    config.user +
+    ":" +
+    config.pass +
+    "@" +
+    config.host +
+    ":" +
+    config.port +
+    "/" +
+    config.vhost;
 
-//   return queue_url;
-// }
+  return queue_url;
+}
 
-// const connection = new Amqp.Connection(get_url());
-// const exchange = connection.declareExchange("Peleza", "direct");
-// const queue = connection.declareQueue("VerifiedQueue");
-// queue.bind(exchange);
+const connection = new Amqp.Connection(get_url());
+const exchange = connection.declareExchange("Peleza", "direct");
+const queue = connection.declareQueue("VerifiedQueue");
+queue.bind(exchange);
 
-// queue.activateConsumer(
-//   (message) => {
-//     console.log(
-//       " Queue Message received ..should call process queue message: " +
-//         message.getContent()
-//     );
-//     processQueueMessage(message.getContent());
-//     message.ack();
-//   },
-//   { noAck: false }
-// );
+queue.activateConsumer(
+  (message) => {
+    console.log(
+      " Queue Message received ..should call process queue message: " +
+        message.getContent()
+    );
+    processQueueMessage(message.getContent());
+    message.ack();
+  },
+  { noAck: false }
+);
 
-// connection.completeConfiguration().then(() => {
-//   console.log(" ==Queue  Config Done and Ready ===");
-// });
+connection.completeConfiguration().then(() => {
+  console.log(" ==Queue  Config Done and Ready ===");
+});
 
 async function getModule(module_code) {
   return execute<Imodule>(PelezaQueries.validateModule, [module_code]);
