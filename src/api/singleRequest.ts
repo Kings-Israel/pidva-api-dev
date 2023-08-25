@@ -53,7 +53,6 @@ export default (router) => {
         validation_data: [req.body.validation_data],
         client_login_id: tknData.client_company_id,
       };
-      // client_company_id:
 
       const { request_ref_number } = await BussinesLogicService.saveApiRequest(apiReq);
       const responseStatus = {

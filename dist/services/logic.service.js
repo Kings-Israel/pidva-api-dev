@@ -43,44 +43,53 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clientLogin = exports.processQueueMessage = exports.FetchPeldataByClientRef = exports.fetchDetailsByRef = exports.saveApiRequest = void 0;
 const mysql_connector_1 = require("../config/mysql.connector");
-const config_1 = require("../config/config");
+// import { RABBITMQ } from "../config/config";
 const callback = __importStar(require("../interfaces/callback"));
 const querries_1 = require("../repo/querries");
 const service_report_1 = require("../report/service.report");
-const crypto_1 = __importStar(require("crypto"));
-const Amqp = __importStar(require("../interfaces/queue"));
+const crypto_1 = __importDefault(require("crypto"));
+// import * as Amqp from "../interfaces/queue";
 const request_validation_1 = require("../validations/request.validation");
 const api_security_1 = require("../security/api.security");
-function get_url() {
-    const config = config_1.RABBITMQ;
-    const queue_url = "amqp://" +
-        config.user +
-        ":" +
-        config.pass +
-        "@" +
-        config.host +
-        ":" +
-        config.port +
-        "/" +
-        config.vhost;
-    return queue_url;
-}
-const connection = new Amqp.Connection(get_url());
-const exchange = connection.declareExchange("Peleza", "direct");
-const queue = connection.declareQueue("VerifiedQueue");
-queue.bind(exchange);
-queue.activateConsumer((message) => {
-    console.log(" Queue Message received ..should call process queue message: " +
-        message.getContent());
-    (0, exports.processQueueMessage)(message.getContent());
-    message.ack();
-}, { noAck: false });
-connection.completeConfiguration().then(() => {
-    console.log(" ==Queue  Config Done and Ready ===");
-});
+// function get_url() {
+//   const config = RABBITMQ;
+//   const queue_url =
+//     "amqp://" +
+//     config.user +
+//     ":" +
+//     config.pass +
+//     "@" +
+//     config.host +
+//     ":" +
+//     config.port +
+//     "/" +
+//     config.vhost;
+//   return queue_url;
+// }
+// const connection = new Amqp.Connection(get_url());
+// const exchange = connection.declareExchange("Peleza", "direct");
+// const queue = connection.declareQueue("VerifiedQueue");
+// queue.bind(exchange);
+// queue.activateConsumer(
+//   (message) => {
+//     console.log(
+//       " Queue Message received ..should call process queue message: " +
+//         message.getContent()
+//     );
+//     processQueueMessage(message.getContent());
+//     message.ack();
+//   },
+//   { noAck: false }
+// );
+// connection.completeConfiguration().then(() => {
+//   console.log(" ==Queue  Config Done and Ready ===");
+// });
 function getModule(module_code) {
     return __awaiter(this, void 0, void 0, function* () {
         return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.validateModule, [module_code]);
@@ -168,12 +177,23 @@ function makeid(length) {
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {
-        if (counter == 10) {
-            result +=
-                "-" + characters.charAt(Math.floor(Math.random() * charactersLength));
+        if (length >= 15) {
+            if (counter == 5 || counter == 12) {
+                result +=
+                    "-" + characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            else {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
         }
         else {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            if (counter == 10) {
+                result +=
+                    "-" + characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            else {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
         }
         counter += 1;
     }
@@ -181,7 +201,8 @@ function makeid(length) {
 }
 const saveApiRequest = (RequestData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const system_reference = (0, crypto_1.randomUUID)();
+        // const system_reference = randomUUID();
+        const system_reference = makeid(15);
         const request_ref_number = makeid(13);
         const tasks = [];
         yield Promise.all(RequestData.validation_data.map((request_details) => (0, request_validation_1.ValidateSingleRequest)(request_details)));
