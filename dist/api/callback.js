@@ -17,7 +17,7 @@ exports.default = (router) => {
     router.post('/callback', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log(" callback received ", req.body);
-            let data = JSON.stringify(req.body);
+            const data = JSON.stringify(req.body);
             fs_1.default.writeFileSync('latest-callback.json', data);
             return res.status(200).json({ status: "received" });
         }
@@ -27,8 +27,8 @@ exports.default = (router) => {
     }));
     router.get('/latest-callback', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let rawdata = fs_1.default.readFileSync('latest-callback.json');
-            let latestData = JSON.parse(rawdata.toString());
+            const rawdata = fs_1.default.readFileSync('latest-callback.json');
+            const latestData = JSON.parse(rawdata.toString());
             return res.status(200).json(latestData);
         }
         catch (err) {
@@ -37,8 +37,8 @@ exports.default = (router) => {
     }));
     router.get('/callbackview', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let rawdata = fs_1.default.readFileSync('latest-callback.json');
-            let latestData = JSON.parse(rawdata.toString());
+            const rawdata = fs_1.default.readFileSync('latest-callback.json');
+            const latestData = JSON.parse(rawdata.toString());
             return res.render('pages/index', latestData);
         }
         catch (err) {

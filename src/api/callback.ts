@@ -5,7 +5,7 @@ export default (router) => {
     router.post('/callback', async (req: Request, res: Response) => {
           try {
               console.log(" callback received ",req.body);
-              let data = JSON.stringify(req.body);
+              const data = JSON.stringify(req.body);
               fs.writeFileSync('latest-callback.json', data);
             return res.status(200).json({status:"received"})
           }
@@ -17,8 +17,8 @@ export default (router) => {
 
     router.get('/latest-callback', async (req: Request, res: Response) => {
         try {
-            let rawdata = fs.readFileSync('latest-callback.json');
-            let latestData = JSON.parse(rawdata.toString());
+            const rawdata = fs.readFileSync('latest-callback.json');
+            const latestData = JSON.parse(rawdata.toString());
             return res.status(200).json(latestData)
         }
         catch (err) {
@@ -29,8 +29,8 @@ export default (router) => {
 
     router.get('/callbackview', async (req: Request, res: Response) => {
         try {
-            let rawdata = fs.readFileSync('latest-callback.json');
-            let latestData = JSON.parse(rawdata.toString());
+            const rawdata = fs.readFileSync('latest-callback.json');
+            const latestData = JSON.parse(rawdata.toString());
             return  res.render('pages/index',latestData);
         }
         catch (err) {

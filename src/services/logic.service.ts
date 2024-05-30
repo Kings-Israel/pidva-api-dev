@@ -10,6 +10,7 @@ import {
   IPelData,
   IClientData,
   ICompanyData,
+  IPelCompanyData,
 } from "../repo/Ipsmt.model";
 import { fetchCallbackData } from "../report/service.report";
 import crypto, { randomUUID } from "crypto";
@@ -78,6 +79,17 @@ async function findPeldataByClientRef(client_reference) {
   ]);
 }
 
+async function findPelDataByCompany(client_company_id) {
+  return execute<IPelData>(PelezaQueries.findPelDataByCompany, [client_company_id]);
+}
+
+async function findPelCompanyData(search_ids) {
+  return execute<IPelCompanyData>(PelezaQueries.findPelCompanyData, [
+    search_ids,
+  ]);
+}
+
+
 async function savePelRequest(pelData: IPelReq) {
   // here you can use rest destruturing
   return execute<IPelReq>(PelezaQueries.SavePelApiRequest, [
@@ -132,8 +144,7 @@ async function savePelModuleRequest(moduleData: IPelModule) {
 
 function makeid(length: number) {
   let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   let counter = 0;
   while (counter < length) {
@@ -160,8 +171,14 @@ function makeid(length: number) {
 export const saveApiRequest = async (RequestData: any) => {
   try {
     // const system_reference = randomUUID();
-    const system_reference = makeid(15);
+    const system_reference = makeid(15)
     const request_ref_number = makeid(13)
+    const ref_number_exists = fetchDetailsByRef(request_ref_number)
+    console.log(ref_number_exists)
+    // while (ref_number_exists) {
+    //   request_ref_number = makeid(13)
+    //   ref_number_exists = fetchDetailsByRef(request_ref_number)
+    // }
     const tasks: Promise<any>[] = [];
     await Promise.all(
       RequestData.validation_data.map((request_details) =>
@@ -210,6 +227,31 @@ export const FetchPeldataByClientRef = (
       if (!pelData) {
         throw new Error(" Invalid client_reference  ");
       }
+      return resolve(pelData);
+    } catch (error) {
+      return reject(error);
+    }
+  });
+};
+
+export const FetchPeldataByCompany = (client_reference: string): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const pelData = await findPelDataByCompany(client_reference);
+      if (!pelData) {
+        throw new Error(" Invalid client_id  ");
+      }
+      return resolve(pelData);
+    } catch (error) {
+      return reject(error);
+    }
+  });
+};
+
+export const FetchPelCompanyData = (search_ids: Array<string>): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const pelData = await findPelCompanyData(search_ids);
       return resolve(pelData);
     } catch (error) {
       return reject(error);
@@ -308,12 +350,6 @@ async function* callTasks(promises) {
     yield await promise;
   }
 }
-
-// export const testSimulation = async (request_id) => {
-//   const msg = new Amqp.Message(request_id);
-//   exchange.send(msg);
-//   console.log(" === Test simulation message sent ===");
-// };
 
 export const processQueueMessage = async (request_id) => {
   ///
