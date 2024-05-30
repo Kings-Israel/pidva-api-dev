@@ -47,7 +47,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clientLogin = exports.processQueueMessage = exports.FetchPeldataByClientRef = exports.fetchDetailsByRef = exports.saveApiRequest = void 0;
+exports.clientLogin = exports.processQueueMessage = exports.FetchPelCompanyData = exports.FetchPeldataByCompany = exports.FetchPeldataByClientRef = exports.fetchDetailsByRef = exports.saveApiRequest = void 0;
 const mysql_connector_1 = require("../config/mysql.connector");
 const config_1 = require("../config/config");
 const callback = __importStar(require("../interfaces/callback"));
@@ -108,6 +108,18 @@ function findPeldataByClientRef(client_reference) {
     return __awaiter(this, void 0, void 0, function* () {
         return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.findPeldataByClientRef, [
             client_reference,
+        ]);
+    });
+}
+function findPelDataByCompany(client_company_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.findPelDataByCompany, [client_company_id]);
+    });
+}
+function findPelCompanyData(search_ids) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return (0, mysql_connector_1.execute)(querries_1.PelezaQueries.findPelCompanyData, [
+            search_ids,
         ]);
     });
 }
@@ -198,6 +210,12 @@ const saveApiRequest = (RequestData) => __awaiter(void 0, void 0, void 0, functi
         // const system_reference = randomUUID();
         const system_reference = makeid(15);
         const request_ref_number = makeid(13);
+        const ref_number_exists = (0, exports.fetchDetailsByRef)(request_ref_number);
+        console.log(ref_number_exists);
+        // while (ref_number_exists) {
+        //   request_ref_number = makeid(13)
+        //   ref_number_exists = fetchDetailsByRef(request_ref_number)
+        // }
         const tasks = [];
         yield Promise.all(RequestData.validation_data.map((request_details) => (0, request_validation_1.ValidateSingleRequest)(request_details)));
         RequestData.validation_data.forEach((element) => {
@@ -247,6 +265,33 @@ const FetchPeldataByClientRef = (client_reference) => {
     }));
 };
 exports.FetchPeldataByClientRef = FetchPeldataByClientRef;
+const FetchPeldataByCompany = (client_reference) => {
+    return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const pelData = yield findPelDataByCompany(client_reference);
+            if (!pelData) {
+                throw new Error(" Invalid client_id  ");
+            }
+            return resolve(pelData);
+        }
+        catch (error) {
+            return reject(error);
+        }
+    }));
+};
+exports.FetchPeldataByCompany = FetchPeldataByCompany;
+const FetchPelCompanyData = (search_ids) => {
+    return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const pelData = yield findPelCompanyData(search_ids);
+            return resolve(pelData);
+        }
+        catch (error) {
+            return reject(error);
+        }
+    }));
+};
+exports.FetchPelCompanyData = FetchPelCompanyData;
 function addHours(date, hours) {
     date.setHours(date.getHours() + hours);
     return date;
@@ -330,11 +375,6 @@ function callTasks(promises) {
         }
     });
 }
-// export const testSimulation = async (request_id) => {
-//   const msg = new Amqp.Message(request_id);
-//   exchange.send(msg);
-//   console.log(" === Test simulation message sent ===");
-// };
 const processQueueMessage = (request_id) => __awaiter(void 0, void 0, void 0, function* () {
     ///
     try {
